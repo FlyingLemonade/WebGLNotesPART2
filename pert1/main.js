@@ -79,7 +79,7 @@ var spotLight = new THREE.SpotLight(0xff1111, 200, 1000, 15, 10);
 moon.add(spotLight);
 earth.add(spotLight.target);
 
-moon.add(new THREE.SpotLightHelper(spotLight));
+//moon.add(new THREE.SpotLightHelper(spotLight));
 
 new MTLLoader()
   .setPath("resources/Satellite/")
