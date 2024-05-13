@@ -37,7 +37,7 @@ controls.update();
 
 //sun
 var geometry = new THREE.SphereGeometry(1, 10, 10);
-var material = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+var material = new THREE.MeshPhongMaterial({ color: 0xffff33 });
 var sun = new THREE.Mesh(geometry, material);
 scene.add(sun);
 sun.castShadow = true;
@@ -75,7 +75,6 @@ plane.castShadow = true;
 plane.receiveShadow = true;
 
 
-
 // //Ambient Light
 // //agar ambient light bisa, ubah di bagian material -> .MeshBasicMaterial menjadi -> .MeshPhongMaterial
 // var ambientLight = new THREE.AmbientLight(0XFF6666)
@@ -88,7 +87,7 @@ scene.add(hemisphereLight);
 
 // Directional Light
 var directionalLight = new THREE.DirectionalLight(0xffffff, 10);
-directionalLight.position.set(3, 3, 3);
+directionalLight.position.set(30, 30, 30);
 directionalLight.target.position.set(0, 0, 0);
 scene.add(directionalLight);
 scene.add(directionalLight.target);
@@ -105,7 +104,6 @@ directionalLight.shadow.camera.bottom = -15;
 directionalLight.shadow.camera.width = 1204;
 directionalLight.shadow.camera.height = 1024;
 
-
 //shadow helper
 var directionalShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
 scene.add(directionalShadowHelper)
@@ -116,34 +114,38 @@ var pointLight = new THREE.PointLight(0xffff11, 150);
 sun.add(pointLight);
 
 // spot light
-var spotLight = new THREE.SpotLight(0xff1111, 200, 1000, 15, 10);
-moon.add(spotLight);
+var spotLight = new THREE.SpotLight(0xff1111, 2000, 1000, 5, 10);
+spotLight.castShadow = true;
+scene.add(spotLight);
 earth.add(spotLight.target);
 
-//moon.add(new THREE.SpotLightHelper(spotLight));
+scene.add(new THREE.SpotLightHelper(spotLight))
 var spotLightShadowHelper = new THREE.CameraHelper(spotLight.shadow.camera);
-scene.add(spotLightShadowHelper)
+scene.add(spotLightShadowHelper);
 
 new MTLLoader()
-    .setPath("resources/Satellite/")
-    .load("Satelite.mtl", function (materials) {
+    .setPath( 'resources/Satellite/Satellite/' )
+    .load( 'Satelite.mtl', function ( materials ) {
         materials.preload();
         new OBJLoader()
-            .setMaterials(materials)
-            .setPath("resources/Satellite/")
-            .load("satelite.obj", function (object) {
-                earth.add(object);
-                object.scale.set(0.1, 0.1, 0.1);
-                object.position.set(-3, 0, 0);
-                object.castShadow = true;
-                object.receiveShadow = true;
-            });
-    });
+            .setMaterials( materials )
+            .setPath( 'resources/Satellite/Satellite/' )
+            .load( 'Satelite.obj', function ( object ) {
 
+                earth.add( object );
+                object.scale.set(0.1,0.1,0.1);
+                object.position.set(-3,0,0);
+                object.traverse( function ( child ) {
+                    if ( child.isMesh ) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
+                } );
+            } );
+    } );
 
 // model objek karakter dari MIXAMO
 var mixer;
-
 const loader = new FBXLoader();
 loader.load('resources/Dancing Twerk.fbx', function (object) {
 
@@ -170,7 +172,7 @@ var clock = new THREE.Clock();
 function animate() {
     renderer.render(scene, camera);
     sun.rotation.y += 0.01;
-    earth.rotation.y += 0.01;
+    earth.rotation.y += 0.05;
     requestAnimationFrame(animate);
 
     //untuk update animasi model
