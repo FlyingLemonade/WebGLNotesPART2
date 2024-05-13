@@ -20,3 +20,8 @@ import script in html
 
 change <version> to 0.164.1
 
+
+
+MIXAMO, char model
+https://www.mixamo.com/#/?page=1&type=Character
+
