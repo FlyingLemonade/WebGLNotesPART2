@@ -124,12 +124,12 @@ var spotLightShadowHelper = new THREE.CameraHelper(spotLight.shadow.camera);
 scene.add(spotLightShadowHelper);
 
 new MTLLoader()
-    .setPath( 'resources/Satellite/Satellite/' )
+    .setPath( '../resources/Satellite/' )
     .load( 'Satelite.mtl', function ( materials ) {
         materials.preload();
         new OBJLoader()
             .setMaterials( materials )
-            .setPath( 'resources/Satellite/Satellite/' )
+            .setPath( '../resources/Satellite/' )
             .load( 'Satelite.obj', function ( object ) {
 
                 earth.add( object );
@@ -147,7 +147,7 @@ new MTLLoader()
 // model objek karakter dari MIXAMO
 var mixer;
 const loader = new FBXLoader();
-loader.load('resources/Dancing Twerk.fbx', function (object) {
+loader.load('../resources/Flair.fbx', function (object) {
 
     //1 karakter 1 mixer
     mixer = new THREE.AnimationMixer(object);
