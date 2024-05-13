@@ -82,12 +82,12 @@ earth.add(spotLight.target);
 //moon.add(new THREE.SpotLightHelper(spotLight));
 
 new MTLLoader()
-  .setPath("resources/Satellite/")
+  .setPath("../resources/Satellite/")
   .load("Satelite.mtl", function (materials) {
     materials.preload();
     new OBJLoader()
       .setMaterials(materials)
-      .setPath("resources/Satellite/")
+      .setPath("../resources/Satellite/")
       .load("satelite.obj", function (object) {
         earth.add(object);
         object.scale.set(0.1, 0.1, 0.1);
