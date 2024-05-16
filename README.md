@@ -2,13 +2,12 @@
 I LOVE GRAFKOM
 
 
-part 2 of https://github.com/FlyingLemonade/WebGLNotes 
+<b>part 2 of https://github.com/FlyingLemonade/WebGLNotes</b>
 
-this repo is using three.js
+# SETUP
 
-
-SETUP
-import script in html
+<b>Put this in your html </b>
+"""
 <script type="importmap">
   {
     "imports": {
@@ -17,11 +16,16 @@ import script in html
     }
   }
 </script>
+"""
 
 change <version> to 0.164.1
 
 
+# Resources
+<ul>
+  <li>MIXAMO, char model</li>
+  https://www.mixamo.com/#/?page=1&type=Character
+</ul>
 
-MIXAMO, char model
-https://www.mixamo.com/#/?page=1&type=Character
+
 
