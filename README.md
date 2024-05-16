@@ -7,7 +7,7 @@ I LOVE GRAFKOM
 # SETUP
 
 <b>Put this in your html </b>
-"""
+```
 <script type="importmap">
   {
     "imports": {
@@ -16,7 +16,7 @@ I LOVE GRAFKOM
     }
   }
 </script>
-"""
+```
 
 change <version> to 0.164.1
 
