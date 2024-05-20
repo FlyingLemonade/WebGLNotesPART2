@@ -31,7 +31,8 @@ export class Player {
     if(this.controller.keys['right']){
         direction.z = 1
     }
-    this.mesh.position.add(direction);
+    this.mesh.position.add(direction.multiplyScalar(dt * 10));
+    // this.mesh.position.add(direction);
     this.camera.setup(this.mesh.position)
   }
 }
