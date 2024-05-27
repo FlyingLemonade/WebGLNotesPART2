@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { FBXLoader } from "three/addons/loaders/FBXLoader.js"
 
 export class Player {
     constructor(camera, controller, scene) {
@@ -7,20 +8,55 @@ export class Player {
         this.scene = scene;
         this.rotationVector = new THREE.Vector3();
 
+        this.animations = {}
+        this.state = 'idle'
+
         this.camera.setup(new THREE.Vector3(0, 0, 0), this.rotationVector);
         
 
-        this.mesh = new THREE.Mesh(
-            new THREE.BoxGeometry(1, 1, 1),
-            new THREE.MeshPhongMaterial({ color: 0xFF1111})
-        );
-        this.mesh.receiveShadow = true;
-        this.mesh.castShadow = true;
-        //this.mesh.position.set(0, 5, 0)
-        this.scene.add(this.mesh)
+        // this.mesh = new THREE.Mesh(
+        //     new THREE.BoxGeometry(1, 1, 1),
+        //     new THREE.MeshPhongMaterial({ color: 0xFF1111})
+        // );
+        // this.mesh.receiveShadow = true;
+        // this.mesh.castShadow = true;
+        // //this.mesh.position.set(0, 5, 0)
+        // this.scene.add(this.mesh)
+        this.loadModel()
+    }
+
+    loadModel() {
+        var loader = new FBXLoader();
+        loader.setPath("../resources/Knight/")
+        loader.load("Knight idle.fbx", (fbx) => {
+            fbx.scale.setScalar(0.01)
+            fbx.traverse(c => {
+                c.castShadow = true;
+            })
+            this.mesh = fbx
+            this.scene.add(this.mesh)
+
+            this.mixer = new THREE.AnimationMixer(this.mesh)
+            var onLoad = (animName, anim) => {
+                var clip = anim.animations[0]
+                var action = this.mixer.clipAction(clip)
+
+                this.animations[animName] = {
+                    clip:clip,
+                    action:action
+                }
+            }
+
+            var loader = new FBXLoader();
+            loader.setPath("../resources/Knight/")
+            loader.load('Knight idle.fbx', (fbx) => {onLoad('idle', fbx)})
+            loader.load('Knight run.fbx', (fbx) => {onLoad('run', fbx)})
+        })
     }
 
     update(dt) {
+
+        if(!this.mesh) return
         var direction = new THREE.Vector3(0, 0 ,0);
         if(this.controller.key['forward']) {
             direction.x = 1;
@@ -38,10 +74,37 @@ export class Player {
         var dtMouse = this.controller.deltaMousePos
         dtMouse.x = dtMouse.x / Math.PI
         dtMouse.y = dtMouse.y / Math.PI
-        this.rotationVector.y += dtMouse.x;
-        this.rotationVector.z += dtMouse.y;
+        this.rotationVector.y += dtMouse.x * dt * 50;
+        this.rotationVector.z += dtMouse.y * dt * 50;
+        this.mesh.rotation.y = this.rotationVector.y;
 
-        this.mesh.position.add(direction.multiplyScalar(dt * 50));
+        if(direction.length() == 0){
+            if(this.animations['idle']) {
+                if(this.state != 'idle') {
+                    this.mixer.stopAllAction();
+                    this.state = 'idle'
+                }
+                this.mixer.clipAction(this.animations['idle'].clip).play()
+                this.mixer.update(dt)
+            }
+        } else {
+            if(this.animations['run']) {
+                if(this.state != 'run') {
+                    this.mixer.stopAllAction();
+                    this.state = 'run'
+                }
+                this.mixer.clipAction(this.animations['run'].clip).play()
+                this.mixer.update(dt)
+            }
+        }
+
+        var forwardVector = new THREE.Vector3(1, 0, 0)
+        var rightVector = new THREE.Vector3(0, 0 ,1)
+        forwardVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), this.rotationVector.y);
+        rightVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), this.rotationVector.y)
+        this.mesh.position.add(forwardVector.multiplyScalar(dt * 10 * direction.x));
+        this.mesh.position.add(rightVector.multiplyScalar(dt * 10 * direction.z));
+
         this.camera.setup(this.mesh.position, this.rotationVector);
     }
 }
