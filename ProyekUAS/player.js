@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { FBXLoader } from "three/addons/loaders/FBXLoader.js"
+import * as CANNON from "../resources/cannonjs/cannon-es.js";
+import CannonDebugger from "../resources/cannonjs/cannon-es-debugger.js";
 
 class BasicCharacterControllerProxy {
     constructor(animations) {
@@ -31,7 +33,6 @@ export class BasicCharacterController {
   
       this._LoadModels();
     }
-  
     _LoadModels() {
       const loader = new FBXLoader();
       loader.setPath('../resources/Clown/');
@@ -51,6 +52,21 @@ export class BasicCharacterController {
           this._stateMachine.SetState('idle');
         };
   
+        // Physics
+        const playerModel = new CANNON.Vec3(2.6, 10, 3);
+        const playerShape = new CANNON.Box(playerModel);
+        const playerBody = new CANNON.Body({ mass: 0 });
+        playerBody.addShape(playerShape);
+        playerBody.position.set(0, 10, 0);
+        
+        this._params.world.addBody(playerBody);
+        
+        this._cannonBox = {
+            mesh: fbx,
+            body: playerBody,
+        };
+
+
         const _OnLoad = (animName, anim) => {
           const clip = anim.animations[0];
           const action = this._mixer.clipAction(clip);
@@ -82,7 +98,7 @@ export class BasicCharacterController {
   
     Update(timeInSeconds) {
       if (!this._stateMachine._currentState) {
-        return;
+          return;
       }
   
       this._stateMachine.Update(timeInSeconds, this._input);
@@ -99,34 +115,33 @@ export class BasicCharacterController {
   
       velocity.add(frameDecceleration);
   
-      const controlObject = this._target;
+      const controlObject = this._cannonBox.body;
       const _Q = new THREE.Quaternion();
       const _A = new THREE.Vector3();
       const _R = controlObject.quaternion.clone();
   
       const acc = this._acceleration.clone();
-
+  
       if (this._stateMachine._currentState.Name == 'dance') {
-        acc.multiplyScalar(0.0);
+          acc.multiplyScalar(0.0);
       }
   
       if (this._input._keys.forward) {
-        velocity.z += acc.z * timeInSeconds * 2;
+          velocity.z += acc.z * timeInSeconds * 2;
       }
       if (this._input._keys.backward) {
-        velocity.z -= acc.z * timeInSeconds * 2;
+          velocity.z -= acc.z * timeInSeconds * 2;
       }
       if (this._input._keys.left) {
-        _A.set(0, 1, 0);
-        _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * this._acceleration.y);
-        _R.multiply(_Q);
+          _A.set(0, 1, 0);
+          _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * this._acceleration.y);
+          _R.mult(_Q, _R);
       }
       if (this._input._keys.right) {
-        _A.set(0, 1, 0);
-        _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * timeInSeconds * this._acceleration.y);
-        _R.multiply(_Q);
+          _A.set(0, 1, 0);
+          _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * timeInSeconds * this._acceleration.y);
+          _R.mult(_Q, _R);
       }
-  
       controlObject.quaternion.copy(_R);
   
       const oldPosition = new THREE.Vector3();
@@ -143,15 +158,28 @@ export class BasicCharacterController {
       sideways.multiplyScalar(velocity.x * timeInSeconds);
       forward.multiplyScalar(velocity.z * timeInSeconds);
   
-      controlObject.position.add(forward);
-      controlObject.position.add(sideways);
+      controlObject.position.x += forward.x + sideways.x;
+      controlObject.position.y += forward.y + sideways.y;
+      controlObject.position.z += forward.z + sideways.z;
+  
+      const cannonPosition = controlObject.position;
   
       this._position.copy(controlObject.position);
+      if (this._cannonBox) {
+          this._cannonBox.body.position.copy(cannonPosition);
+          this._cannonBox.body.quaternion.copy(controlObject.quaternion);
+          const objPosition = {x : controlObject.position.x, y: 0, z: controlObject.position.z};
+          this._position.copy(objPosition);
+          this._cannonBox.mesh.position.copy(objPosition);
+          this._cannonBox.mesh.quaternion.copy(controlObject.quaternion);
+      }
+  
   
       if (this._mixer) {
-        this._mixer.update(timeInSeconds);
+          this._mixer.update(timeInSeconds);
       }
-    }
+  }
+  
   };
   
   class BasicCharacterControllerInput {
@@ -418,7 +446,7 @@ export class ThirdPersonCamera {
     }
   
     _CalculateIdealOffset() {
-      const idealOffset = new THREE.Vector3(-150, 200, -300);
+      const idealOffset = new THREE.Vector3(-15, 20, -30);
       idealOffset.applyQuaternion(this._params.target.Rotation);
       idealOffset.add(this._params.target.Position);
       return idealOffset;

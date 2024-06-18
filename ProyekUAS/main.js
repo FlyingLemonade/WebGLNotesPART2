@@ -1,11 +1,18 @@
 import * as THREE from "three";
 import { Map } from "./map.js"; 
 
-
 let _APP = null;
 
 window.addEventListener('DOMContentLoaded', () => {
-  _APP = new Map();
+  
+  Ammo().then((lib) => {
+    Ammo = lib;
+    
+    _APP = new Map();
+    
+  });
+
+
 });
 
 
