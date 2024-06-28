@@ -3,6 +3,9 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import {ThirdPersonCamera, BasicCharacterController} from "./player.js";
 import * as CANNON from "../resources/cannonjs/cannon-es.js";
 import CannonDebugger from "../resources/cannonjs/cannon-es-debugger.js";
+import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+
 
 export class Map {
     constructor() {
@@ -33,25 +36,147 @@ export class Map {
         this._camera.position.set(25, 10, 25);
 
         this._scene = new THREE.Scene();
-        let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-        light.position.set(-100, 100, 100);
-        light.target.position.set(0, 0, 0);
-        light.castShadow = true;
-        light.shadow.bias = -0.001;
-        light.shadow.mapSize.width = 4096;
-        light.shadow.mapSize.height = 4096;
-        light.shadow.camera.near = 0.1;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.near = 0.5;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.left = 50;
-        light.shadow.camera.right = -50;
-        light.shadow.camera.top = 50;
-        light.shadow.camera.bottom = -50;
+        // let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+        // light.position.set(-100, 100, 100);
+        // light.target.position.set(0, 0, 0);
+        // light.castShadow = true;
+        // light.shadow.bias = -0.001;
+        // light.shadow.mapSize.width = 4096;
+        // light.shadow.mapSize.height = 4096;
+        // light.shadow.camera.near = 0.1;
+        // light.shadow.camera.far = 500.0;
+        // light.shadow.camera.near = 0.5;
+        // light.shadow.camera.far = 500.0;
+        // light.shadow.camera.left = 50;
+        // light.shadow.camera.right = -50;
+        // light.shadow.camera.top = 50;
+        // light.shadow.camera.bottom = -50;
+        // this._scene.add(light);
+
+        let light = new THREE.AmbientLight(0x0F93B7, 0.4);
         this._scene.add(light);
 
-        light = new THREE.AmbientLight(0x0F93B7, 0.4);
-        this._scene.add(light);
+        // Lighting
+    
+        // 3 Lampu Besar The Mean Bean
+        
+        const bigBulp = [[-40,60,15],[-68,56,-28],[-68, 56, 56]]
+
+        for(let i = 0; i < bigBulp.length ; i++){
+            var bulbLight = new THREE.PointLight(0xffee88, 1, 100, 1);
+            var BulpX = bigBulp[i][0];
+            var BulpY = bigBulp[i][1];
+            var BulpZ = bigBulp[i][2];
+
+            bulbLight.position.set(BulpX, BulpY, BulpZ);
+            bulbLight.castShadow = true;
+            bulbLight.intensity = 15;
+            bulbLight.power = 1*100;
+            this._scene.add(bulbLight);
+        }
+
+        // Lampu Kecil Atas Meja
+
+        const smallBulp = [
+            [1.75, 42.5, 76.5],
+            [28, 42.5, 76.5],
+            [54.5, 42.5, 76.5],
+            [80.75, 42.5, 76.5],
+            [107.25, 42.5, 76.5],
+            [93, 43, 55],
+            [93, 43, 28.75],
+            [93, 43.5, 2.5]
+        
+        ];
+
+        for (let i = 0; i < smallBulp.length; i++) {
+            const bulbGeometry = new THREE.SphereGeometry(0.8, 16, 8);
+            var angle = Math.PI/4.0
+            var penumbra = 0.4;
+            var decay = 1;
+            var bulbLight = new THREE.SpotLight(0xffee88, 1.0, 50,angle,penumbra,decay); // Adjust the distance as needed
+            var BulpX = smallBulp[i][0];
+            var BulpY = smallBulp[i][1];
+            var BulpZ = smallBulp[i][2];
+            const bulbMat = new THREE.MeshStandardMaterial({
+                emissive: 0xffffee,
+                emissiveIntensity: 1,
+                color: 0x000000,
+            });
+            const bulbMesh = new THREE.Mesh(bulbGeometry, bulbMat);
+        
+            bulbLight.add(bulbMesh);
+            bulbLight.position.set(BulpX, BulpY, BulpZ);
+            bulbLight.castShadow = true;
+            bulbLight.intensity = 1*100;
+            const targetObject = new THREE.Object3D();
+            targetObject.position.set(BulpX, 0, BulpZ);
+            this._scene.add(targetObject);
+            bulbLight.target = targetObject;
+        
+            // Add the light to the scene
+            this._scene.add(bulbLight);
+        
+        }
+
+        // Lampu Layar
+            const spotLightLaptop = new THREE.SpotLight(0xffffff, 5.5, 30, Math.PI / 2.1, 0.1, 1);
+            spotLightLaptop.position.set(32.5, 12, 13.2);
+            spotLightLaptop.rotation.x = Math.PI;
+            spotLightLaptop.rotation.y = Math.PI / 11.5;
+            spotLightLaptop.castShadow = true;
+            var targetObject = new THREE.Object3D();
+            targetObject.position.set(32.25, 12, 14);
+            this._scene.add(targetObject);
+            spotLightLaptop.target = targetObject;
+            spotLightLaptop.intensity = .08*100;
+            spotLightLaptop.shadow.mapSize.width = 512; 
+            spotLightLaptop.shadow.mapSize.height = 512;
+            spotLightLaptop.shadow.camera.near = 0.5;
+            spotLightLaptop.shadow.camera.far = 50;
+            this._scene.add(spotLightLaptop);
+
+        // Layar HP
+            const spotLightPhone = new THREE.SpotLight(0xB3A540, 5.5, 30, Math.PI / 2.1, 0.1, 1);
+            spotLightPhone.position.set(18.7, 12, 41.85);
+            spotLightPhone.rotation.x = Math.PI;
+            spotLightPhone.rotation.y = Math.PI / 11.5;
+            spotLightPhone.castShadow = true;
+            var targetObject = new THREE.Object3D();
+            targetObject.position.set(18.7, 100, 41.85);
+            this._scene.add(targetObject);
+            spotLightPhone.target = targetObject;
+            spotLightPhone.intensity = .14*100;
+            spotLightPhone.shadow.mapSize.width = 512; 
+            spotLightPhone.shadow.mapSize.height = 512;
+            spotLightPhone.shadow.camera.near = 0.5;
+            spotLightPhone.shadow.camera.far = 50;
+            this._scene.add(spotLightPhone);
+
+        
+
+        // const smallBulp = [[1.75, 42.5, 76.5]]
+        // for(let i = 0; i < smallBulp.length ; i++){
+        //     const bulbGeometry = new THREE.SphereGeometry(0.8, 16, 8);
+        //     var bulbLight = new THREE.PointLight(0xffee88, 1, 100, .3);
+        //     var BulpX = smallBulp[i][0];
+        //     var BulpY = smallBulp[i][1];
+        //     var BulpZ = smallBulp[i][2];
+        //     const bulbMat = new THREE.MeshStandardMaterial({
+        //         emissive: 0xffffee,
+        //         emissiveIntensity: 1,
+        //         color: 0x000000,
+        //       });
+        //       const bulbMesh = new THREE.Mesh(bulbGeometry, bulbMat);
+          
+        //     bulbLight.add(bulbMesh);
+        //     bulbLight.position.set(BulpX, BulpY, BulpZ);
+        //     bulbLight.castShadow = true;
+        //     bulbLight.intensity = 15;
+        //     bulbLight.power = .4*100;
+        //     this._scene.add(bulbLight);
+        // }
+
 
         const loader = new THREE.CubeTextureLoader();
         const texture = loader.load([
@@ -136,7 +261,7 @@ export class Map {
             });
             model.rotation.x = -1.56;
             model.position.y = 26;
-            // this._scene.add(model);
+            this._scene.add(model);
         });
 
           // Physics
@@ -168,7 +293,8 @@ export class Map {
     _CreateCannonBox() {
       const halfExtents = new CANNON.Vec3(3, 3, 3);
       const boxShape = new CANNON.Box(halfExtents);
-      const boxBody = new CANNON.Body({ mass: 1});
+      
+      const boxBody = new CANNON.Body({ mass: 0 });
       boxBody.addShape(boxShape);
       boxBody.position.set(10, 15, 0);
   

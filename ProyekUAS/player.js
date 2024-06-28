@@ -57,7 +57,7 @@ export class BasicCharacterController {
         const playerShape = new CANNON.Box(playerModel);
         const playerBody = new CANNON.Body({ mass: 0 });
         playerBody.addShape(playerShape);
-        playerBody.position.set(0, 10, 0);
+        playerBody.position.set(30, 10, 30);
         
         this._params.world.addBody(playerBody);
         
@@ -446,14 +446,14 @@ export class ThirdPersonCamera {
     }
   
     _CalculateIdealOffset() {
-      const idealOffset = new THREE.Vector3(-15, 20, -30);
+      const idealOffset = new THREE.Vector3(-15, 25, -30);
       idealOffset.applyQuaternion(this._params.target.Rotation);
       idealOffset.add(this._params.target.Position);
       return idealOffset;
     }
   
     _CalculateIdealLookat() {
-      const idealLookat = new THREE.Vector3(0, 10, 50);
+      const idealLookat = new THREE.Vector3(0, 5, 50);
       idealLookat.applyQuaternion(this._params.target.Rotation);
       idealLookat.add(this._params.target.Position);
       return idealLookat;
