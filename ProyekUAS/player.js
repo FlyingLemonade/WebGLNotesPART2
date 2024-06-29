@@ -53,11 +53,13 @@ export class BasicCharacterController {
         };
   
         // Physics
-        const playerModel = new CANNON.Vec3(2.6, 10, 3);
+        const playerModel = new CANNON.Vec3(3, 9, 3);
         const playerShape = new CANNON.Box(playerModel);
-        const playerBody = new CANNON.Body({ mass: 0 });
+        const playerBody = new CANNON.Body({ mass: 1000, type: CANNON.Body.DYNAMIC});
+        playerBody.angularDamping = 1;
+
         playerBody.addShape(playerShape);
-        playerBody.position.set(30, 10, 30);
+        playerBody.position.set(100, 10, 0);
         
         this._params.world.addBody(playerBody);
         

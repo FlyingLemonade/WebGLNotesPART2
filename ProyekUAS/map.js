@@ -192,10 +192,49 @@ export class Map {
        
         this._mixers = [];
         this._previousRAF = null;
-        this._cannonBoxes = [];
-
         this._InitializeCannon();
-        this._CreateCannonBox();
+
+        this._CreateCannonBox(8, 6, 8, 9, 8, 14); //Sofa kanan
+        this._CreateCannonBox(8, 8, 8, 68, 10, 14); //Sofa kiri
+        this._CreateCannonBox(13, 6, 8, 39, 8, 14); //Meja sofa
+        this._CreateCannonBox(14, 6, 8, 39, 8, 37); //Sofa tengah
+        this._CreateCannonBox(6, 8, 6, 16, 8, 41); //Meja sofa kanan
+        this._CreateCannonBox(5, 10, 5, 62, 10, 40); //Meja sofa kiri
+        
+        this._CreateCannonBox(3, 8, 27, 93, 9, 25); //Meja panjang kiri
+        this._CreateCannonBox(4, 8, 4, 100, 9, 41); //Kursi meja panjang 1
+        this._CreateCannonBox(4, 8, 4, 102, 9, 21); //Kursi meja panjang 2
+        this._CreateCannonBox(4, 8, 4, 101, 9, 5); //Kursi meja panjang 3
+
+        this._CreateCannonBox(27, 8, 3, 90, 9, 76); //Meja tengah 1
+        this._CreateCannonBox(4, 8, 4, 100, 9, 84); //Kursi meja tengah 1_1
+        this._CreateCannonBox(4, 8, 4, 72, 9, 83); //Kursi meja tengah 1_2
+
+        this._CreateCannonBox(27, 8, 3, 21, 9, 76); //Meja tengah 2
+        this._CreateCannonBox(4, 8, 4, 38, 9, 79); //Kursi meja tengah 2_1
+        this._CreateCannonBox(4, 8, 4, 22, 9, 84); //Kursi meja tengah 2_2
+        this._CreateCannonBox(4, 8, 4, 6, 9, 82); //Kursi meja tengah 2_2
+
+        this._CreateCannonBox(6, 15, 14, -100, 16, 80); //Fridge
+
+        this._CreateCannonCircle(53, -88, 15, 14); //Bartender
+        this._CreateCannonBox(3, 6, 3, -74, 7, 70); //Kursi bartender 1
+        this._CreateCannonBox(3, 6, 3, -59, 7, 64.5); //Kursi bartender 2
+        this._CreateCannonBox(3, 6, 3, -49, 7, 56); //Kursi bartender 3
+        this._CreateCannonBox(3, 6, 3, -38.5, 7, 42); //Kursi bartender 4
+
+        this._CreateCannonBox(11, 7, 6, -42, 9, -59); //Exit room table
+        this._CreateCannonBox(9, 7, 3, -68, 9, -63); //Trash Bin
+        this._CreateCannonBox(9, 10, 3, -94, 25, -63); //Hangar
+
+        this._CreateCannonBox(19, 7, 11, -58, 9, -107.5); //Billiard table
+        this._CreateCannonBox(8, 8, 8, -97, 10, -130); //Circle table
+        this._CreateCannonBox(6, 10, 5, -14, 11, -133.5); //Billiard speaker
+
+        this._CreateCannonBox(11, 14, 7, 108, 15, -39); //Speaker & Plant
+        
+        this._CreateCannonBox(50.5, 14, 35, 45.5, 15, -62); //Stage
+
         // this._CreateCannonBox();
         // this._CreateCannonBox();
         // this._CreateCannonBox();
@@ -276,7 +315,7 @@ export class Map {
 
     _InitializeCannon() {
         this._world = new CANNON.World();
-        this._world.gravity.set(0, -10, 0);
+        this._world.gravity.set(0, -100, 0);
 
         this._cannonDebugger = new CannonDebugger(this._scene, this._world, {
             onInit: (body, mesh) => {
@@ -290,33 +329,26 @@ export class Map {
         });
     }
 
-    _CreateCannonBox() {
-      const halfExtents = new CANNON.Vec3(3, 3, 3);
+    _CreateCannonBox(sizeX, sizeY, sizeZ, posX, posY, posZ) {
+      const halfExtents = new CANNON.Vec3(sizeX, sizeY, sizeZ);
       const boxShape = new CANNON.Box(halfExtents);
       
-      const boxBody = new CANNON.Body({ mass: 0 });
+      const boxBody = new CANNON.Body({ mass: 0, type: CANNON.Body.STATIC});
       boxBody.addShape(boxShape);
-      boxBody.position.set(10, 15, 0);
-  
+      boxBody.position.set(posX, posY, posZ);
       this._world.addBody(boxBody);
-  
-      const boxGeometry = new THREE.BoxGeometry(5, 5, 5);
-      const boxMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
-      const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-      boxMesh.castShadow = true;
-      boxMesh.receiveShadow = true;
-      boxMesh.position.copy(boxBody.position); // Set the position of the mesh to match the body
-  
-      this._scene.add(boxMesh);
-  
-      const _cannonBox = {
-          mesh: boxMesh,
-          body: boxBody,
-      };
-      this._cannonBoxes.push(_cannonBox);
-
   }
   
+    _CreateCannonCircle(radius, posX, posY, posZ) {
+      const segments = 64;
+      const cylinderShape = new CANNON.Cylinder(radius, radius, 0.1, segments);
+
+      const cylinderBody = new CANNON.Body({ mass: 0, type: CANNON.Body.STATIC });
+      cylinderBody.addShape(cylinderShape);
+      cylinderBody.position.set(posX, posY, posZ);
+    this._world.addBody(cylinderBody); // Menambahkan tubuh fisika ke dalam dunia simulasi
+}
+
 
     _OnWindowResize() {
         this._camera.aspect = window.innerWidth / window.innerHeight;
@@ -352,10 +384,6 @@ export class Map {
 
         this._world.step(timeElapsedS);
 
-        for (const cannonBox of this._cannonBoxes) { 
-          cannonBox.mesh.position.copy(cannonBox.body.position);
-          cannonBox.mesh.quaternion.copy(cannonBox.body.quaternion);
-      }
         this._cannonDebugger.update();
     }
 }
