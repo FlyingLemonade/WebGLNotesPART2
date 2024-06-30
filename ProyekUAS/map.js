@@ -235,6 +235,15 @@ export class Map {
         
         this._CreateCannonBox(50.5, 14, 35, 45.5, 15, -62); //Stage
 
+        this._CreateCannonBox(1, 37, 90, 135, 37, 40) //Tembok pintu masuk
+        this._CreateCannonBox(122, 40, 1, 15, 40, 132) //Tembok depan panggung
+        this._CreateCannonBox(1, 37, 137, -108, 37, -4) //Tembok belakang bar
+        this._CreateCannonBox(50, 37, 1, -60, 39, -143) //Tembok billiard room_1
+        this._CreateCannonBox(1, 37, 38, -6, 39, -107) //Tembok billiard room_2
+        this._CreateCannonBox(41, 37, 1, -68, 39, -67) //Tembok billiard room_3
+        this._CreateCannonBox(6, 37, 7.5, -12, 39, -73) //Tembok billiard room_4
+        this._CreateCannonBox(20, 37, 1, 115, 39, -50) //Tembok speaker stage
+        
         // this._CreateCannonBox();
         // this._CreateCannonBox();
         // this._CreateCannonBox();
@@ -379,7 +388,6 @@ export class Map {
         if (this._controls) {
             this._controls.Update(timeElapsedS);
         }
-
         this._thirdPersonCamera.Update(timeElapsedS);
 
         this._world.step(timeElapsedS);

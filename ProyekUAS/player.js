@@ -59,7 +59,7 @@ export class BasicCharacterController {
         playerBody.angularDamping = 1;
 
         playerBody.addShape(playerShape);
-        playerBody.position.set(100, 10, 0);
+        playerBody.position.set(-40, 10, -80);
         
         this._params.world.addBody(playerBody);
         
