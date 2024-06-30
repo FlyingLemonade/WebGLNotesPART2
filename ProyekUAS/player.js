@@ -59,8 +59,8 @@ export class BasicCharacterController {
         playerBody.angularDamping = 1;
 
         playerBody.addShape(playerShape);
-        playerBody.position.set(-40, 10, -80);
-        
+        // playerBody.position.set(-40, 10, -80);
+        playerBody.position.set(30, 10, 0)
         this._params.world.addBody(playerBody);
         
         this._cannonBox = {
@@ -449,6 +449,7 @@ export class ThirdPersonCamera {
   
     _CalculateIdealOffset() {
       const idealOffset = new THREE.Vector3(-15, 25, -30);
+      // const idealOffset = new THREE.Vector3(-15, 50, -30);
       idealOffset.applyQuaternion(this._params.target.Rotation);
       idealOffset.add(this._params.target.Position);
       return idealOffset;

@@ -59,8 +59,16 @@ export class Map {
         // Lighting
     
         // 3 Lampu Besar The Mean Bean
-        
-        const bigBulp = [[-40,60,15],[-68,56,-28],[-68, 56, 56]]
+        const bigBulp = [
+            [-40,60,15]
+        ]
+        //     const bigBulp = [
+        //     [-40,60,15],
+        //     [-68,56,-28],
+        //     [-68, 56, 56]
+        // ]
+
+
 
         for(let i = 0; i < bigBulp.length ; i++){
             var bulbLight = new THREE.PointLight(0xffee88, 1, 100, 1);
@@ -78,16 +86,21 @@ export class Map {
         // Lampu Kecil Atas Meja
 
         const smallBulp = [
-            [1.75, 42.5, 76.5],
             [28, 42.5, 76.5],
-            [54.5, 42.5, 76.5],
             [80.75, 42.5, 76.5],
-            [107.25, 42.5, 76.5],
-            [93, 43, 55],
             [93, 43, 28.75],
-            [93, 43.5, 2.5]
-        
         ];
+        // const smallBulp = [
+        //     [1.75, 42.5, 76.5],
+        //     [28, 42.5, 76.5],
+        //     [54.5, 42.5, 76.5],
+        //     [80.75, 42.5, 76.5],
+        //     [107.25, 42.5, 76.5],
+        //     [93, 43, 55],
+        //     [93, 43, 28.75],
+        //     [93, 43.5, 2.5]
+        
+        // ];
 
         for (let i = 0; i < smallBulp.length; i++) {
             const bulbGeometry = new THREE.SphereGeometry(0.8, 16, 8);
@@ -153,7 +166,96 @@ export class Map {
             spotLightPhone.shadow.camera.far = 50;
             this._scene.add(spotLightPhone);
 
+         // Lampu Speaker Kanan Panggung
+         const spotLightSpeaker = new THREE.SpotLight(0xFFFFFF, 5.5, 20, Math.PI / 2, 1, 1);
+         spotLightSpeaker.position.set(15, 8.5, -34.5);
+         spotLightSpeaker.rotation.x = Math.PI;
+         spotLightSpeaker.rotation.y = Math.PI / 11.5;
+         spotLightSpeaker.castShadow = true;
+         var targetObject = new THREE.Object3D();
+         targetObject.position.set(15, 8.5, -30.5);
+         this._scene.add(targetObject);
+
+         spotLightSpeaker.target = targetObject;
+         spotLightSpeaker.intensity = .03*100;
+         spotLightSpeaker.shadow.mapSize.width = 512; 
+         spotLightSpeaker.shadow.mapSize.height = 512;
+         spotLightSpeaker.shadow.camera.near = 0.5;
+         spotLightSpeaker.shadow.camera.far = 50;
+         this._scene.add(spotLightSpeaker);
+
+        // Lampu Speaker Kiri Panggung
+        const spotLightSpeaker2 = new THREE.SpotLight(0xFFFFFF, 5.5, 20, Math.PI / 2, 1, 1);
+        spotLightSpeaker2.position.set(86, 20, -37.5);
+        spotLightSpeaker2.rotation.x = Math.PI;
+        spotLightSpeaker2.rotation.y = Math.PI / 11.5;
+        spotLightSpeaker2.castShadow = true;
+        var targetObject = new THREE.Object3D();
+        targetObject.position.set(86, 15, -35.5);
+        this._scene.add(targetObject);
+
+        spotLightSpeaker2.target = targetObject;
+        spotLightSpeaker2.intensity = .03*100;
+        spotLightSpeaker2.shadow.mapSize.width = 512; 
+        spotLightSpeaker2.shadow.mapSize.height = 512;
+        spotLightSpeaker2.shadow.camera.near = 0.5;
+        spotLightSpeaker2.shadow.camera.far = 50;
+        this._scene.add(spotLightSpeaker2);
+
+        // Lampu Jedag Jedug
+        const stageLamp = [
+            [5,47.5,-48],
+            [26,47.5,-32.5],
+            [65,47.5,-33],
+            [88,47.5,-46],
         
+        ];
+
+        const stageLampDirection = [
+            [35,0,-90],
+            [70,0,-60],
+            [35,0,-70],
+            [75,-10,-90],
+            
+        ];
+
+        const stageLampColor= [
+            0xFF0000,
+            0x00008B,
+            0xFFFF00,
+            0x00FF00
+            
+        ];
+
+        this.stageLampRender =[]
+        for(let i = 0; i < stageLamp.length ; i++){
+            // const bulbGeometry = new THREE.SphereGeometry(2.5, 16, 8);
+            var bulbLight = new THREE.SpotLight(stageLampColor[i], 5.5, 100, Math.PI / 4, .5, .3);
+            var BulpX = stageLamp[i][0];
+            var BulpY = stageLamp[i][1];
+            var BulpZ = stageLamp[i][2];
+            var BulpDirectionX = stageLampDirection[i][0];
+            var BulpDirectionY = stageLampDirection[i][1];
+            var BulpDirectionZ = stageLampDirection[i][2];
+            // const bulbMat = new THREE.MeshStandardMaterial({
+            //     emissive: 0xffffee,
+            //     emissiveIntensity: 1,
+            //     color: 0x000000,
+            //   });
+            //   const bulbMesh = new THREE.Mesh(bulbGeometry, bulbMat);
+
+            var targetObject = new THREE.Object3D();
+            targetObject.position.set(BulpDirectionX, BulpDirectionY, BulpDirectionZ);
+            this._scene.add(targetObject);
+            bulbLight.target = targetObject;
+            // bulbLight.add(bulbMesh);
+            bulbLight.position.set(BulpX, BulpY, BulpZ);
+            bulbLight.castShadow = true;
+            bulbLight.intensity = 15;
+            bulbLight.power = 3*100;
+            this._scene.add(bulbLight);
+            this.stageLampRender.push(bulbLight);
+        }
 
         // const smallBulp = [[1.75, 42.5, 76.5]]
         // for(let i = 0; i < smallBulp.length ; i++){
@@ -393,5 +495,14 @@ export class Map {
         this._world.step(timeElapsedS);
 
         this._cannonDebugger.update();
+
+        for(let i = 0 ; i < 4 ; i++){
+            let color = this.stageLampRender[i].color;
+            color.offsetHSL(0.01, 0, 0);
+            this.stageLampRender[i].color.set(color);
+        }
+        
     }
+
+    
 }
