@@ -5,6 +5,8 @@ import * as CANNON from "../resources/cannonjs/cannon-es.js";
 import CannonDebugger from "../resources/cannonjs/cannon-es-debugger.js";
 import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import { FBXLoader } from "three/addons/loaders/FBXLoader.js"
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 
 export class Map {
@@ -36,24 +38,33 @@ export class Map {
         this._camera.position.set(25, 10, 25);
 
         this._scene = new THREE.Scene();
-        // let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-        // light.position.set(-100, 100, 100);
-        // light.target.position.set(0, 0, 0);
-        // light.castShadow = true;
-        // light.shadow.bias = -0.001;
-        // light.shadow.mapSize.width = 4096;
-        // light.shadow.mapSize.height = 4096;
-        // light.shadow.camera.near = 0.1;
-        // light.shadow.camera.far = 500.0;
-        // light.shadow.camera.near = 0.5;
-        // light.shadow.camera.far = 500.0;
-        // light.shadow.camera.left = 50;
-        // light.shadow.camera.right = -50;
-        // light.shadow.camera.top = 50;
-        // light.shadow.camera.bottom = -50;
-        // this._scene.add(light);
+        // let lightDirectional = new THREE.DirectionalLight(0x0FFFFF, 0.02);
+        // lightDirectional.position.set(50, 0, 500);
+        // lightDirectional.target.position.set(0, 0, 0);
+        // lightDirectional.castShadow = true;
+        // lightDirectional.shadow.bias = -0.001;
+        // lightDirectional.shadow.mapSize.width = 4096;
+        // lightDirectional.shadow.mapSize.height = 4096;
+        // lightDirectional.shadow.camera.near = 0.1;
+        // lightDirectional.shadow.camera.far = 500.0;
+        // lightDirectional.shadow.camera.near = 0.5;
+        // lightDirectional.shadow.camera.far = 500.0;
+        // lightDirectional.shadow.camera.left = 50;
+        // lightDirectional.shadow.camera.right = -50;
+        // lightDirectional.shadow.camera.top = 50;
+        // lightDirectional.shadow.camera.bottom = -50;
+        // this._scene.add(lightDirectional);
 
-        let light = new THREE.AmbientLight(0x0F93B7, 0.4);
+        // Add light helper
+        // let lightHelper = new THREE.DirectionalLightHelper(lightDirectional, 5); // Second parameter is the size of the helper
+        // this._scene.add(lightHelper);
+
+        this._controls = new OrbitControls(this._camera, this._threejs.domElement);
+        this._controls.enableDamping = true;
+        this._controls.dampingFactor = 0.25; 
+        this._controls.screenSpacePanning = false;
+
+        let light = new THREE.AmbientLight(0x0F93B7, 0.2);
         this._scene.add(light);
 
         // Lighting
@@ -86,9 +97,9 @@ export class Map {
         // Lampu Kecil Atas Meja
 
         const smallBulp = [
-            [28, 42.5, 76.5],
-            [80.75, 42.5, 76.5],
-            [93, 43, 28.75],
+            // [28, 42.5, 76.5],
+            // [80.75, 42.5, 76.5],
+            // [93, 43, 28.75],
         ];
         // const smallBulp = [
         //     [1.75, 42.5, 76.5],
@@ -137,7 +148,6 @@ export class Map {
             spotLightLaptop.position.set(32.5, 12, 13.2);
             spotLightLaptop.rotation.x = Math.PI;
             spotLightLaptop.rotation.y = Math.PI / 11.5;
-            spotLightLaptop.castShadow = true;
             var targetObject = new THREE.Object3D();
             targetObject.position.set(32.25, 12, 14);
             this._scene.add(targetObject);
@@ -154,7 +164,6 @@ export class Map {
             spotLightPhone.position.set(18.7, 12, 41.85);
             spotLightPhone.rotation.x = Math.PI;
             spotLightPhone.rotation.y = Math.PI / 11.5;
-            spotLightPhone.castShadow = true;
             var targetObject = new THREE.Object3D();
             targetObject.position.set(18.7, 100, 41.85);
             this._scene.add(targetObject);
@@ -171,7 +180,6 @@ export class Map {
          spotLightSpeaker.position.set(15, 8.5, -34.5);
          spotLightSpeaker.rotation.x = Math.PI;
          spotLightSpeaker.rotation.y = Math.PI / 11.5;
-         spotLightSpeaker.castShadow = true;
          var targetObject = new THREE.Object3D();
          targetObject.position.set(15, 8.5, -30.5);
          this._scene.add(targetObject);
@@ -189,7 +197,6 @@ export class Map {
         spotLightSpeaker2.position.set(86, 20, -37.5);
         spotLightSpeaker2.rotation.x = Math.PI;
         spotLightSpeaker2.rotation.y = Math.PI / 11.5;
-        spotLightSpeaker2.castShadow = true;
         var targetObject = new THREE.Object3D();
         targetObject.position.set(86, 15, -35.5);
         this._scene.add(targetObject);
@@ -205,9 +212,9 @@ export class Map {
         // Lampu Jedag Jedug
         const stageLamp = [
             [5,47.5,-48],
-            [26,47.5,-32.5],
+            // [26,47.5,-32.5],
             [65,47.5,-33],
-            [88,47.5,-46],
+            // [88,47.5,-46],
         
         ];
 
@@ -230,7 +237,7 @@ export class Map {
         this.stageLampRender =[]
         for(let i = 0; i < stageLamp.length ; i++){
             // const bulbGeometry = new THREE.SphereGeometry(2.5, 16, 8);
-            var bulbLight = new THREE.SpotLight(stageLampColor[i], 5.5, 100, Math.PI / 4, .5, .3);
+            var bulbLight = new THREE.SpotLight(stageLampColor[i], 5.5, 100, Math.PI / 2.3, .5, .3);
             var BulpX = stageLamp[i][0];
             var BulpY = stageLamp[i][1];
             var BulpZ = stageLamp[i][2];
@@ -252,7 +259,7 @@ export class Map {
             bulbLight.position.set(BulpX, BulpY, BulpZ);
             bulbLight.castShadow = true;
             bulbLight.intensity = 15;
-            bulbLight.power = 3*100;
+            bulbLight.power = 2*100;
             this._scene.add(bulbLight);
             this.stageLampRender.push(bulbLight);
         }
@@ -278,6 +285,61 @@ export class Map {
         //     bulbLight.power = .4*100;
         //     this._scene.add(bulbLight);
         // }
+
+        // const geometry = new THREE.SphereGeometry(1, 32, 32);
+        const geometry = new THREE.IcosahedronGeometry(1, 1);
+        const material = new THREE.MeshPhysicalMaterial({
+          color: 0xFFFFFF,
+          roughness: 0.5,
+          transmission: 1,
+          thickness: 0.2,
+          metalness: 0.5,
+
+        });
+      
+        this.discoBall = new THREE.Mesh(geometry, material);
+
+        this.discoBall.position.set(45,40,-45)
+        this.discoBall.scale.set(4.0,4.0,4.0);
+        this._scene.add(this.discoBall);
+
+        const geometryDoor = new THREE.SphereGeometry(.5,32,32);
+        const materialDoor = new THREE.MeshPhysicalMaterial({
+            color: 0xFFFFFF,
+            roughness: 1.0,
+            // transmission: 1,
+            opacity: 0.8,
+            transparent: true,
+            thickness: 0.8,
+            metalness: 0.8,
+            side: THREE.DoubleSide, 
+        });
+        
+        const meshDoor = new THREE.Mesh(geometryDoor, materialDoor);
+
+        meshDoor.position.set(10,0,10)
+        meshDoor.scale.set(420.0,420.0,420.0);
+        // this._scene.add(meshDoor);
+
+
+        const geometryWall = new THREE.BoxGeometry(3,80,245);
+        const materialWall = new THREE.MeshPhysicalMaterial({
+            color: 0xBDBCEA,
+            roughness: 0.3,
+            // transmission: 1,
+            opacity: 0.5,
+            transparent: true,
+            thickness: 0.2,
+            metalness: 0.5,
+            side: THREE.DoubleSide, 
+        });
+        
+        const meshWall = new THREE.Mesh(geometryWall, materialWall);
+        meshWall.rotation.y = 90 * Math.PI / 180;
+        meshWall.position.set(10,0,10)
+        meshWall.receiveShadow = true;
+        meshWall.position.set(15, 35, 134);
+        this._scene.add(meshWall);
 
 
         const loader = new THREE.CubeTextureLoader();
@@ -351,7 +413,23 @@ export class Map {
         // this._CreateCannonBox();
         this._LoadAnimatedModel();
         this._LoadCoffeeShopModel();
-
+        const Deg30 = Math.PI/6;
+        const Deg45 = Math.PI/4;
+        const Deg90 = Math.PI/2;
+        const Deg120 = Math.PI*2/3;
+        const Deg180 = Math.PI;
+        
+        // this._LoadNPCModel("Dancer_1.fbx",[65,0,-18],[0, Deg180, 0],.13, true,[5,9,3]);
+        // this._LoadNPCModel("Dancer_2.fbx",[20,8,-60],[0,-Deg45, 0],.13, false);
+        // this._LoadNPCModel("Dancer_3.fbx",[45,8,-60],[0, 0, 0],.13, false);
+        // this._LoadNPCModel("Dancer_4.fbx",[4,20.5,-41],[0, Deg120, 0],.13, false);
+        // this._LoadNPCModel("Dancer_5.fbx",[35,9.8,34],[0, Deg90, 0],.09, false);
+        // this._LoadNPCModel("Drum_1.fbx",[68,8,-76],[0,-Deg30, 0],.13, false);
+        // this._LoadNPCModel("idle_1.fbx",[-60,0,34],[0,Deg45, 0],.13, false);
+        // this._LoadNPCModel("Sit_1.fbx",[-38,6.8,42],[0,-Deg30, 0],.06, true,[5,9,8]);
+        // this._LoadNPCModel("Sit_2.fbx",[71,6,83],[0,-Deg120, 0],.12, false);
+        // this._LoadNPCModel("Sit_3.fbx",[35,3,10],[0,Deg180, 0],.13, true,[5,9,8]);
+        
         this._RAF();
     }
 
@@ -362,13 +440,52 @@ export class Map {
             world: this._world,
            
         };
-        this._controls = new BasicCharacterController(params);
+        // this._controls = new BasicCharacterController(params);
 
-        this._thirdPersonCamera = new ThirdPersonCamera({
-            camera: this._camera,
-            target: this._controls,
+        // this._thirdPersonCamera = new ThirdPersonCamera({
+        //     camera: this._camera,
+        //     target: this._controls,
+        // });
+        
+    }
+
+    _LoadNPCModel(file_path, pos, rot, scale, enablePhysics, physicsBox){
+        const loader = new FBXLoader();
+        loader.setPath('../resources/Dancer/');
+        loader.load(file_path, (fbx) => {
+            fbx.scale.setScalar(0.1);
+            fbx.traverse(c => {
+            c.castShadow = true;
         });
         
+        var _target = fbx;
+        this._scene.add(_target);
+        _target.scale.setScalar(scale);
+        _target.position.set(pos[0],pos[1],pos[2]);
+        _target.receiveShadow = true
+        _target.rotation.set(rot[0],rot[1],rot[2])
+        const mixer = new THREE.AnimationMixer(fbx);
+        this._mixers.push(mixer);
+        
+        const action = mixer.clipAction(fbx.animations[0]);
+        action.play(); 
+ 
+        // Physics
+        if (enablePhysics){
+            const npcModel = new CANNON.Vec3(physicsBox[0], physicsBox[1], physicsBox[2]);
+            const npcShape = new CANNON.Box(npcModel);
+            const npcBody = new CANNON.Body({ mass: 0, type: CANNON.Body.STATIC});
+            npcBody.angularDamping = 1;
+        
+            npcBody.addShape(npcShape);
+            // npcBody.position.set(-40, 10, -80);
+            npcBody.position.set(pos[0], 10, pos[2])
+            console.log(npcBody)
+            this._world.addBody(npcBody);
+        }
+              
+
+        })
     }
 
     _LoadCoffeeShopModel() {
@@ -385,16 +502,16 @@ export class Map {
         this._scene.add(this.mesh);
 
         // wall
-        this.mesh = new THREE.Mesh(
-            new THREE.BoxGeometry(3, 80, 245),
-            new THREE.MeshPhongMaterial({ color: 0xBDBCEA })
-        );
+        // this.mesh = new THREE.Mesh(
+        //     new THREE.BoxGeometry(3, 80, 245),
+        //     new THREE.MeshPhongMaterial({ color: 0xBDBCEA })
+        // );
 
-        this.mesh.receiveShadow = true;
-        this.mesh.castShadow = true;
-        this.mesh.rotation.y = 90 * Math.PI / 180;
-        this.mesh.position.set(15, 40, 133);
-        this._scene.add(this.mesh);
+        // this.mesh.receiveShadow = true;
+        // this.mesh.castShadow = true;
+        // this.mesh.rotation.y = 90 * Math.PI / 180;
+        // this.mesh.position.set(15, 40, 133);
+        // this._scene.add(this.mesh);
 
         // Main
         const loader = new GLTFLoader();
@@ -430,7 +547,7 @@ export class Map {
 
         this._cannonDebugger = new CannonDebugger(this._scene, this._world, {
             onInit: (body, mesh) => {
-                mesh.visible = true;
+                mesh.visible = false;
                 document.addEventListener("keydown", (event) => {
                     if (event.key === "f") {
                         mesh.visible = !mesh.visible;
@@ -474,7 +591,7 @@ export class Map {
             }
 
             this._RAF();
-
+            
             this._threejs.render(this._scene, this._camera);
             this._Step(t - this._previousRAF);
             this._previousRAF = t;
@@ -485,6 +602,7 @@ export class Map {
         const timeElapsedS = timeElapsed * 0.001;
         if (this._mixers) {
             this._mixers.map(m => m.update(timeElapsedS));
+            console.log("sandal")
         }
 
         if (this._controls) {
@@ -496,12 +614,14 @@ export class Map {
 
         this._cannonDebugger.update();
 
-        for(let i = 0 ; i < 4 ; i++){
+        for(let i = 0 ; i < this.stageLampRender.length ; i++){
             let color = this.stageLampRender[i].color;
             color.offsetHSL(0.01, 0, 0);
             this.stageLampRender[i].color.set(color);
         }
         
+        this.discoBall.rotation.x += 0.1;
+        // this.discoBall.rotation.y += 0.1;
     }
 
     

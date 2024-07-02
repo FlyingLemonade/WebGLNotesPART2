@@ -16,7 +16,7 @@ class Main {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setClearColor(0x000000);
     this.renderer.shadowMap.enabled = true;
-
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     // plane
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshPhongMaterial({ color: 0xffffff }));
 
@@ -25,21 +25,26 @@ class Main {
     plane.castShadow = false;
     this.scene.add(plane);
 
+
+
+    let light = new THREE.AmbientLight(0x0F93B7, 0.4);
+    this.scene.add(light);
+
     // Light
     // var ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     // this.scene.add(ambientLight);
 
     // Directional lighting
-    // var directionalLight = new THREE.DirectionalLight(0xffffff);
-    // directionalLight.castShadow = true;
-    // directionalLight.position.set(-50, 10, 20);
-    // directionalLight.shadow.camera.near = 1;
-    // directionalLight.shadow.camera.far = 100;
-    // directionalLight.shadow.camera.right = 50;
-    // directionalLight.shadow.camera.left = -50;
-    // directionalLight.shadow.camera.top = 50;
-    // directionalLight.shadow.camera.bottom = -50;
-    // this.scene.add(directionalLight);
+    var directionalLight = new THREE.DirectionalLight(0xffffff);
+    directionalLight.castShadow = true;
+    directionalLight.position.set(-50, 10, 20);
+    directionalLight.shadow.camera.near = 1;
+    directionalLight.shadow.camera.far = 100;
+    directionalLight.shadow.camera.right = 50;
+    directionalLight.shadow.camera.left = -50;
+    directionalLight.shadow.camera.top = 50;
+    directionalLight.shadow.camera.bottom = -50;
+    this.scene.add(directionalLight);
 
     // var directionalShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
     // this.scene.add(directionalShadowHelper);
@@ -59,7 +64,7 @@ class Main {
     bulbLight.castShadow = true;
     bulbLight.intensity = 5;
     bulbLight.power = 200;
-    this.scene.add(bulbLight);
+    // this.scene.add(bulbLight);
 
     // Small bulb light 2
     const bulbGeometry2 = new THREE.SphereGeometry(0.02, 16, 8);
@@ -77,6 +82,41 @@ class Main {
     bulbLight2.intensity = 5;
     bulbLight2.power = 0;
     this.scene.add(bulbLight2);
+
+    const createCube = function (size, material, x, y, z) {
+        const geometry = new THREE.BoxGeometry(size, size, size),
+        cube = new THREE.Mesh(geometry, material);
+        cube.position.set(x, y, z);
+        cube.receiveShadow = true; // Enable receiving shadows
+        return cube;
+    };
+    const materials = {};
+    const geometry = new THREE.IcosahedronGeometry(1, 0);
+    const material = new THREE.MeshPhysicalMaterial({
+      roughness: 0.7,
+      transmission: 1,
+      thickness: 1,
+    });
+  
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(0,2,0)
+    mesh.scale.set(2.0,2.0,2.0);
+    this.scene.add(mesh);
+    materials.glass = new THREE.MeshPhysicalMaterial({
+        color: 'black',
+        transparent: true,
+        opacity: 0.4,
+        thickness: 0.5,
+        transmission:1,
+        roughness: 0.4,
+
+    });
+    const glassCube = createCube(5, materials.glass, 5, 5, 4);
+    const cube = createCube(5, materials.sand, -5, 5,-4);
+    this.scene.add(glassCube);
+    this.scene.add(cube);
+
+
 
     var thirdPerson = new ThirdPersonCamera(this.camera, new THREE.Vector3(-10, 5, 0), new THREE.Vector3(0, 0, 0));
     thirdPerson.setup(new THREE.Vector3(0, 0, 0));

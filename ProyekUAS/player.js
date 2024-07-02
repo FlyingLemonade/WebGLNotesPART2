@@ -46,7 +46,7 @@ export class BasicCharacterController {
         this._params.scene.add(this._target);
   
         this._mixer = new THREE.AnimationMixer(this._target);
-  
+        
         this._manager = new THREE.LoadingManager();
         this._manager.onLoad = () => {
           this._stateMachine.SetState('idle');
@@ -60,7 +60,8 @@ export class BasicCharacterController {
 
         playerBody.addShape(playerShape);
         // playerBody.position.set(-40, 10, -80);
-        playerBody.position.set(30, 10, 0)
+        playerBody.position.set(0, 13, 0)
+        
         this._params.world.addBody(playerBody);
         
         this._cannonBox = {
@@ -134,6 +135,16 @@ export class BasicCharacterController {
       if (this._input._keys.backward) {
           velocity.z -= acc.z * timeInSeconds * 2;
       }
+      // if (this._input._keys.up) {
+      //     _A.set(1, 0, 0);
+      //     _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * timeInSeconds * this._acceleration.x);
+      //     _R.mult(_Q, _R);
+      // }
+      // if (this._input._keys.down) {
+      //     _A.set(1, 0, 0);
+      //     _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * this._acceleration.x);
+      //     _R.mult(_Q, _R);
+      // }
       if (this._input._keys.left) {
           _A.set(0, 1, 0);
           _Q.setFromAxisAngle(_A, 4.0 * Math.PI * timeInSeconds * this._acceleration.y);
@@ -157,6 +168,11 @@ export class BasicCharacterController {
       sideways.applyQuaternion(controlObject.quaternion);
       sideways.normalize();
   
+      const vertical = new THREE.Vector3(0, 1, 0);
+      vertical.applyQuaternion(controlObject.quaternion);
+      vertical.normalize();
+
+      vertical.multiplyScalar(velocity.y * timeInSeconds);
       sideways.multiplyScalar(velocity.x * timeInSeconds);
       forward.multiplyScalar(velocity.z * timeInSeconds);
   
@@ -196,7 +212,8 @@ export class BasicCharacterController {
         left: false,
         right: false,
         space: false,
-        shift: false,
+        up: false,
+        down: false
       };
       document.addEventListener('keydown', (e) => this._onKeyDown(e), false);
       document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
@@ -219,8 +236,11 @@ export class BasicCharacterController {
         case 32: // SPACE
           this._keys.space = true;
           break;
-        case 16: // SHIFT
-          this._keys.shift = true;
+        case 69: // E
+          this._keys.up = true;
+          break;
+        case 81: // Q
+          this._keys.down = true;
           break;
       }
     }
@@ -242,9 +262,13 @@ export class BasicCharacterController {
         case 32: // SPACE
           this._keys.space = false;
           break;
-        case 16: // SHIFT
-          this._keys.shift = false;
+        case 69: // E
+          this._keys.up = false;
           break;
+        case 81: // Q
+          this._keys.down = false;
+          break;
+
       }
     }
   };
@@ -449,7 +473,7 @@ export class ThirdPersonCamera {
   
     _CalculateIdealOffset() {
       const idealOffset = new THREE.Vector3(-15, 25, -30);
-      // const idealOffset = new THREE.Vector3(-15, 50, -30);
+      // const idealOffset = new THREE.Vector3(-15, 200, -200);
       idealOffset.applyQuaternion(this._params.target.Rotation);
       idealOffset.add(this._params.target.Position);
       return idealOffset;
@@ -459,6 +483,7 @@ export class ThirdPersonCamera {
       const idealLookat = new THREE.Vector3(0, 5, 50);
       idealLookat.applyQuaternion(this._params.target.Rotation);
       idealLookat.add(this._params.target.Position);
+      // console.log(idealLookat)
       return idealLookat;
     }
   
