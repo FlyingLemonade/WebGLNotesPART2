@@ -36,7 +36,6 @@ export class Map {
         const far = 1000.0;
         this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         this._camera.position.set(25, 10, 25);
-
         this._scene = new THREE.Scene();
         // let lightDirectional = new THREE.DirectionalLight(0x0FFFFF, 0.02);
         // lightDirectional.position.set(50, 0, 500);
@@ -59,12 +58,8 @@ export class Map {
         // let lightHelper = new THREE.DirectionalLightHelper(lightDirectional, 5); // Second parameter is the size of the helper
         // this._scene.add(lightHelper);
 
-        this._controls = new OrbitControls(this._camera, this._threejs.domElement);
-        this._controls.enableDamping = true;
-        this._controls.dampingFactor = 0.25; 
-        this._controls.screenSpacePanning = false;
 
-        let light = new THREE.AmbientLight(0x0F93B7, 0.2);
+        let light = new THREE.AmbientLight(0x0F93B7, 0.8);
         this._scene.add(light);
 
         // Lighting
@@ -97,9 +92,9 @@ export class Map {
         // Lampu Kecil Atas Meja
 
         const smallBulp = [
-            // [28, 42.5, 76.5],
-            // [80.75, 42.5, 76.5],
-            // [93, 43, 28.75],
+            [28, 42.5, 76.5],
+            [80.75, 42.5, 76.5],
+            [93, 43, 28.75],
         ];
         // const smallBulp = [
         //     [1.75, 42.5, 76.5],
@@ -219,7 +214,7 @@ export class Map {
         ];
 
         const stageLampDirection = [
-            [35,0,-90],
+            [80,0,-90],
             [70,0,-60],
             [35,0,-70],
             [75,-10,-90],
@@ -411,7 +406,7 @@ export class Map {
         // this._CreateCannonBox();
         // this._CreateCannonBox();
         // this._CreateCannonBox();
-        this._LoadAnimatedModel();
+        
         this._LoadCoffeeShopModel();
         const Deg30 = Math.PI/6;
         const Deg45 = Math.PI/4;
@@ -419,17 +414,19 @@ export class Map {
         const Deg120 = Math.PI*2/3;
         const Deg180 = Math.PI;
         
-        // this._LoadNPCModel("Dancer_1.fbx",[65,0,-18],[0, Deg180, 0],.13, true,[5,9,3]);
-        // this._LoadNPCModel("Dancer_2.fbx",[20,8,-60],[0,-Deg45, 0],.13, false);
-        // this._LoadNPCModel("Dancer_3.fbx",[45,8,-60],[0, 0, 0],.13, false);
-        // this._LoadNPCModel("Dancer_4.fbx",[4,20.5,-41],[0, Deg120, 0],.13, false);
-        // this._LoadNPCModel("Dancer_5.fbx",[35,9.8,34],[0, Deg90, 0],.09, false);
-        // this._LoadNPCModel("Drum_1.fbx",[68,8,-76],[0,-Deg30, 0],.13, false);
-        // this._LoadNPCModel("idle_1.fbx",[-60,0,34],[0,Deg45, 0],.13, false);
-        // this._LoadNPCModel("Sit_1.fbx",[-38,6.8,42],[0,-Deg30, 0],.06, true,[5,9,8]);
-        // this._LoadNPCModel("Sit_2.fbx",[71,6,83],[0,-Deg120, 0],.12, false);
-        // this._LoadNPCModel("Sit_3.fbx",[35,3,10],[0,Deg180, 0],.13, true,[5,9,8]);
-        
+        this._LoadNPCModel("Dancer_1.fbx",[35,0,-18],[0, Deg180, 0],.13, true,[5,9,3]);
+        this._LoadNPCModel("Dancer_2.fbx",[20,8,-60],[0,-Deg45, 0],.13, false);
+        this._LoadNPCModel("Dancer_3.fbx",[45,8,-60],[0, 0, 0],.13, false);
+        this._LoadNPCModel("Dancer_4.fbx",[4,20.5,-41],[0, Deg120, 0],.13, false);
+        this._LoadNPCModel("Dancer_5.fbx",[35,9.8,34],[0, Deg90, 0],.09, false);
+        this._LoadNPCModel("Drum_1.fbx",[68,8,-76],[0,-Deg30, 0],.13, false);
+        this._LoadNPCModel("idle_1.fbx",[-60,0,34],[0,Deg45, 0],.13, false);
+        this._LoadNPCModel("Sit_1.fbx",[-38,6.8,42],[0,-Deg30, 0],.06, true,[5,9,8]);
+        this._LoadNPCModel("Sit_2.fbx",[71,6,83],[0,-Deg120, 0],.12, false);
+        this._LoadNPCModel("Sit_3.fbx",[35,3,10],[0,Deg180, 0],.13, true,[5,9,8]);
+        // this._InitializeFreeView();
+        this._InitializeVideo();
+        // this._LoadAnimatedModel();
         this._RAF();
     }
 
@@ -440,13 +437,22 @@ export class Map {
             world: this._world,
            
         };
-        // this._controls = new BasicCharacterController(params);
-
-        // this._thirdPersonCamera = new ThirdPersonCamera({
-        //     camera: this._camera,
-        //     target: this._controls,
-        // });
+        this._controls = new BasicCharacterController(params);
+        console.log(this._controls)
+        this._thirdPersonCamera = new ThirdPersonCamera({
+            camera: this._camera,
+            target: this._controls,
+        });
         
+    }
+
+    _FreeView(){
+        this._controls = new OrbitControls(this._camera, this._threejs.domElement);
+        this._controls.enableDamping = true;
+        this._controls.dampingFactor = 0.25; 
+        this._controls.screenSpacePanning = false;
+
+        console.log("Play")
     }
 
     _LoadNPCModel(file_path, pos, rot, scale, enablePhysics, physicsBox){
@@ -480,7 +486,6 @@ export class Map {
             npcBody.addShape(npcShape);
             // npcBody.position.set(-40, 10, -80);
             npcBody.position.set(pos[0], 10, pos[2])
-            console.log(npcBody)
             this._world.addBody(npcBody);
         }
               
@@ -557,6 +562,220 @@ export class Map {
         });
     }
 
+    _InitializeVideo(){
+        this.video = true;
+        this.vidPos = [130,25,-6];
+        this.vidLook = [0,22,-15];
+        this.zoomIn = true;
+        this.zoomOut = false;
+        this._camera.position.set(130,22,-6);
+        var lookTo = new THREE.Vector3(0,22,-15);
+        this._camera.lookAt(lookTo);
+        this.deggree = Math.PI*2;
+        this.playerLoaded = false;
+        // this.vidPos = [80,20,-6];
+        // this.vidLook = [-38,6.8,42];
+        
+    }
+
+    _UpdateVideo(timeElapsedS){
+        var loading = 45;
+        var starter = 0;
+        var animationTime = starter + this._previousRAF * 0.001 - loading;
+
+        // console.log(animationTime);
+       
+       
+    //    DEBUGGING
+
+       
+    
+        // this._camera.updateProjectionMatrix();
+
+        // var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+        // this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+        // this._camera.lookAt(lookTo);
+
+    //  DEBUGGING
+
+        if(this._previousRAF * 0.001 <= loading){
+            
+        }else if(animationTime <= 4.5){
+        this.vidPos[0] = this.vidPos[0] - timeElapsedS*15
+        this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+        
+        }else if(animationTime <= 10){
+        this.vidLook[2] -= timeElapsedS*30;
+        var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+        this._camera.lookAt(lookTo);
+        }else if (animationTime <= 12){
+    
+        }else if (animationTime <= 16){
+        this.vidPos = [5,45,-40];
+        this.vidLook = [80,0,-80];
+        var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+
+        this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+        this._camera.lookAt(lookTo);
+
+        }else if (animationTime <= 22){
+        this.vidPos = [44.5,30,10];
+        this.vidLook = [44.5,28,-70];
+        if(this.zoomOut){
+            this._camera.zoom += timeElapsedS*5
+                if(this._camera.zoom > 4){
+                    this.zoomIn = true;
+                    this.zoomOut = false;
+                }
+            }
+        if(this.zoomIn){
+            this._camera.zoom -= timeElapsedS*5
+                if(this._camera.zoom < 1){
+                    this.zoomIn = false;
+                    this.zoomOut = true;
+                }
+            }
+        this._camera.updateProjectionMatrix();
+        var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+    
+        this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+        this._camera.lookAt(lookTo);
+    
+        }else if (animationTime <= 23){
+        this.vidPos = [80,45,-85];
+        this.vidLook = [68,21,-76];
+        this._camera.zoom = 1;
+        var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+        
+        this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+        this._camera.lookAt(lookTo);
+        
+        }else if (animationTime <= 28){
+            this._camera.zoom = 1;
+            this.vidPos[2] += (Math.PI* timeElapsedS)*4
+            var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+                
+            this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+            this._camera.lookAt(lookTo);
+            
+        }else if (animationTime <= 39){
+            this._camera.zoom = 1;
+            this.vidPos = [45,40, -25];
+            this.vidLook = [6,18,-57];
+
+            this.deggree -= (timeElapsedS*3/360);
+            this._camera.up.applyAxisAngle(new THREE.Vector3(0, 0, 1), this.deggree);
+
+            var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+            this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+            this._camera.lookAt(lookTo);
+                    
+        }else if (animationTime <= 40){
+            this.vidPos = [80,20,-20];
+            this.vidLook = [35,14,10];
+    
+            this._camera.up.set(0, 1, 0);
+
+            var lookTo = new THREE.Vector3(this.vidLook[2],this.vidLook[1],this.vidLook[0]);
+            this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+            this._camera.lookAt(lookTo);
+                    
+        }else if (animationTime <= 43){
+            this.vidPos[0] -= timeElapsedS*16
+            this.vidPos[2] -= timeElapsedS*4
+
+            var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+            this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+            this._camera.lookAt(lookTo);
+                    
+        }else if (animationTime <= 48){
+            this.vidLook = [35,14,34];
+            this.vidPos[1] += timeElapsedS*8
+            this.vidPos[2] += timeElapsedS*16
+            
+            var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+            this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+            this._camera.lookAt(lookTo);
+                    
+        }
+        else if (animationTime <= 54){
+            this.vidPos[1] -= timeElapsedS*8
+            this.vidPos[0] += timeElapsedS*8
+
+            if(this.vidLook[0] <= 71){
+                this.vidLook[0] += timeElapsedS*20;
+            }
+            if(this.vidLook[1] <= 22){
+                this.vidLook[1] += timeElapsedS*20;
+            }
+            if(this.vidLook[2] <= 83){
+                this.vidLook[2] += timeElapsedS*20;
+            }
+
+            var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+            this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+            this._camera.lookAt(lookTo);
+            
+        }else if (animationTime <= 56){
+            // this.vidLook = [-45,10,39];
+            if(this.vidLook[0] >= -49){
+                this.vidLook[0] -= timeElapsedS*100;
+            }
+            if(this.vidLook[1] >= 9){
+                this.vidLook[1] -= timeElapsedS*40;
+            }
+            if(this.vidLook[2] >= 35){
+                this.vidLook[2] -= timeElapsedS*100;
+            }
+
+
+            var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+            this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+            this._camera.lookAt(lookTo);
+                    
+        }else if (animationTime <= 60){
+            console.log(this.vidLook);
+            this.vidPos[1] += timeElapsedS*5
+            this.vidPos[0] -= timeElapsedS*32
+            this.vidPos[2] += timeElapsedS*4
+            var lookTo = new THREE.Vector3(this.vidLook[0],this.vidLook[1],this.vidLook[2]);
+            this._camera.position.set(this.vidPos[0],this.vidPos[1],this.vidPos[2]);
+            this._camera.lookAt(lookTo);
+                    
+        }else if (animationTime <= 65){
+                  
+        }else if (animationTime <= 67){
+            if(!this.playerLoaded){
+                this._LoadAnimatedModel();
+                this.playerLoaded = true;
+                this.video = false;
+            }                    
+        }
+
+
+
+
+    }
+
+    _InitializeFreeView(){
+        this.freeView = false;
+        
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "v") {
+                
+                this.freeView = !this.freeView;
+                if(this.freeView){
+                    this._FreeView();
+                    
+                }else{
+                    this._LoadAnimatedModel();
+                }
+
+            }
+        });
+    }
+
+
     _CreateCannonBox(sizeX, sizeY, sizeZ, posX, posY, posZ) {
       const halfExtents = new CANNON.Vec3(sizeX, sizeY, sizeZ);
       const boxShape = new CANNON.Box(halfExtents);
@@ -593,6 +812,7 @@ export class Map {
             this._RAF();
             
             this._threejs.render(this._scene, this._camera);
+            
             this._Step(t - this._previousRAF);
             this._previousRAF = t;
         });
@@ -602,13 +822,15 @@ export class Map {
         const timeElapsedS = timeElapsed * 0.001;
         if (this._mixers) {
             this._mixers.map(m => m.update(timeElapsedS));
-            console.log("sandal")
         }
 
-        if (this._controls) {
-            this._controls.Update(timeElapsedS);
-        }
+
+        if(this.video){
+        this._UpdateVideo(timeElapsedS)
+        }else if(!this.freeView){
         this._thirdPersonCamera.Update(timeElapsedS);
+        this._controls.Update(timeElapsedS);
+        }
 
         this._world.step(timeElapsedS);
 
