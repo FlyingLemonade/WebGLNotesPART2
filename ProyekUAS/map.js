@@ -37,21 +37,21 @@ export class Map {
         this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         this._camera.position.set(25, 10, 25);
         this._scene = new THREE.Scene();
-        // let lightDirectional = new THREE.DirectionalLight(0x0FFFFF, 0.02);
-        // lightDirectional.position.set(50, 0, 500);
-        // lightDirectional.target.position.set(0, 0, 0);
-        // lightDirectional.castShadow = true;
-        // lightDirectional.shadow.bias = -0.001;
-        // lightDirectional.shadow.mapSize.width = 4096;
-        // lightDirectional.shadow.mapSize.height = 4096;
-        // lightDirectional.shadow.camera.near = 0.1;
-        // lightDirectional.shadow.camera.far = 500.0;
-        // lightDirectional.shadow.camera.near = 0.5;
-        // lightDirectional.shadow.camera.far = 500.0;
-        // lightDirectional.shadow.camera.left = 50;
-        // lightDirectional.shadow.camera.right = -50;
-        // lightDirectional.shadow.camera.top = 50;
-        // lightDirectional.shadow.camera.bottom = -50;
+        let lightDirectional = new THREE.DirectionalLight(0x0FFFFF, 0.5);
+        lightDirectional.position.set(50, 0, 500);
+        lightDirectional.target.position.set(0, 0, 0);
+        lightDirectional.castShadow = true;
+        lightDirectional.shadow.bias = -0.001;
+        lightDirectional.shadow.mapSize.width = 4096;
+        lightDirectional.shadow.mapSize.height = 4096;
+        lightDirectional.shadow.camera.near = 0.1;
+        lightDirectional.shadow.camera.far = 500.0;
+        lightDirectional.shadow.camera.near = 0.5;
+        lightDirectional.shadow.camera.far = 500.0;
+        lightDirectional.shadow.camera.left = 50;
+        lightDirectional.shadow.camera.right = -50;
+        lightDirectional.shadow.camera.top = 50;
+        lightDirectional.shadow.camera.bottom = -50;
         // this._scene.add(lightDirectional);
 
         // Add light helper
@@ -320,12 +320,12 @@ export class Map {
         const geometryWall = new THREE.BoxGeometry(3,80,245);
         const materialWall = new THREE.MeshPhysicalMaterial({
             color: 0xBDBCEA,
-            roughness: 0.3,
+            roughness: 0.6,
             // transmission: 1,
-            opacity: 0.5,
+            opacity: 0.6,
             transparent: true,
-            thickness: 0.2,
-            metalness: 0.5,
+            thickness: 0.5,
+            metalness: 0.6,
             side: THREE.DoubleSide, 
         });
         
@@ -414,19 +414,19 @@ export class Map {
         const Deg120 = Math.PI*2/3;
         const Deg180 = Math.PI;
         
-        this._LoadNPCModel("Dancer_1.fbx",[35,0,-18],[0, Deg180, 0],.13, true,[5,9,3]);
-        this._LoadNPCModel("Dancer_2.fbx",[20,8,-60],[0,-Deg45, 0],.13, false);
-        this._LoadNPCModel("Dancer_3.fbx",[45,8,-60],[0, 0, 0],.13, false);
-        this._LoadNPCModel("Dancer_4.fbx",[4,20.5,-41],[0, Deg120, 0],.13, false);
-        this._LoadNPCModel("Dancer_5.fbx",[35,9.8,34],[0, Deg90, 0],.09, false);
-        this._LoadNPCModel("Drum_1.fbx",[68,8,-76],[0,-Deg30, 0],.13, false);
-        this._LoadNPCModel("idle_1.fbx",[-60,0,34],[0,Deg45, 0],.13, false);
-        this._LoadNPCModel("Sit_1.fbx",[-38,6.8,42],[0,-Deg30, 0],.06, true,[5,9,8]);
-        this._LoadNPCModel("Sit_2.fbx",[71,6,83],[0,-Deg120, 0],.12, false);
-        this._LoadNPCModel("Sit_3.fbx",[35,3,10],[0,Deg180, 0],.13, true,[5,9,8]);
-        // this._InitializeFreeView();
-        this._InitializeVideo();
-        // this._LoadAnimatedModel();
+        // this._LoadNPCModel("Dancer_1.fbx",[35,0,-18],[0, Deg180, 0],.13, true,[5,9,3]);
+        // this._LoadNPCModel("Dancer_2.fbx",[20,8,-60],[0,-Deg45, 0],.13, false);
+        // this._LoadNPCModel("Dancer_3.fbx",[45,8,-60],[0, 0, 0],.13, false);
+        // this._LoadNPCModel("Dancer_4.fbx",[4,20.5,-41],[0, Deg120, 0],.13, false);
+        // this._LoadNPCModel("Dancer_5.fbx",[35,9.8,34],[0, Deg90, 0],.09, false);
+        // this._LoadNPCModel("Drum_1.fbx",[68,8,-76],[0,-Deg30, 0],.13, false);
+        // this._LoadNPCModel("idle_1.fbx",[-60,0,34],[0,Deg45, 0],.13, false);
+        // this._LoadNPCModel("Sit_1.fbx",[-38,6.8,42],[0,-Deg30, 0],.06, true,[5,9,8]);
+        // this._LoadNPCModel("Sit_2.fbx",[71,6,83],[0,-Deg120, 0],.12, false);
+        // this._LoadNPCModel("Sit_3.fbx",[35,3,10],[0,Deg180, 0],.13, true,[5,9,8]);
+        this._InitializeFreeView();
+        // this._InitializeVideo();
+        this._LoadAnimatedModel();
         this._RAF();
     }
 
@@ -517,6 +517,18 @@ export class Map {
         // this.mesh.rotation.y = 90 * Math.PI / 180;
         // this.mesh.position.set(15, 40, 133);
         // this._scene.add(this.mesh);
+
+        // Roof
+        this.mesh = new THREE.Mesh(
+            new THREE.BoxGeometry(280, .3, 280),
+            new THREE.MeshPhongMaterial({ color: 0xBDBCEA })
+        );
+
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
+        // this.mesh.rotation.y = 90 * Math.PI / 180;
+        this.mesh.position.set(0, 75, -5);
+        this._scene.add(this.mesh);
 
         // Main
         const loader = new GLTFLoader();
