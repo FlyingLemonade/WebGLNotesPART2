@@ -2,6 +2,7 @@
 I LOVE GRAFKOM
 
 <b> Capstone Project of Computer Graphics https://youtu.be/gDzA-t4nwXs</b>
+<br>
 <b>part 2 of https://github.com/FlyingLemonade/WebGLNotes</b>
 
 # SETUP
